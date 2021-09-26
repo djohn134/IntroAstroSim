@@ -159,6 +159,8 @@ def updatemoons():
     juprad = 13
     xscale = juprad*2
     zscale = xscale
+    global jup_img_scaled
+    jup_img_scaled = ImageTk.PhotoImage(jup_img.resize((xscale, zscale)))
     io_ball = sky.create_oval(ju_x + io_x*xscale - moonrad, ju_z + io_z*zscale - moonrad, \
                               ju_x + io_x*xscale + moonrad, ju_z + io_z*zscale + moonrad, \
                               fill="white", tags=("Io", str('% 5.2f' % io_x) ) )
@@ -172,7 +174,7 @@ def updatemoons():
                               ju_x + ca_x*xscale + moonrad, ju_z + ca_z*zscale + moonrad, \
                               fill="white", tags=("Callisto", str('% 4.2f' % ca_x) ))
     ju_ball = sky.create_image(ju_x, ju_z, \
-                               image=jup_img, tags=("Jupiter", "0" ) )
+                               image=jup_img_scaled, tags=("Jupiter", "0" ) )
     updatecolors()
     if io_y < 0: sky.tag_raise(io_ball)
     if eu_y < 0: sky.tag_raise(eu_ball)
@@ -251,8 +253,7 @@ sky = tk.Canvas(moonframe, width=framewidth, height=frameheight/4)
 sky.config(bg="black")
 sky.place(relx=0, rely=0)
 sky.bind("<Button-1>", mooncoords)
-juprad = 2*13
-jup_img = ImageTk.PhotoImage(Image.open("images/jupiter_transparent.png").resize((juprad, juprad)))
+jup_img = Image.open("images/jupiter_transparent.png")
 updatemoons()
 
 
