@@ -30,7 +30,7 @@ import datetime as dt
 from astropy.time import Time, TimezoneInfo
 import astropy.units as u
 from skyfield.api import load, load_file
-
+from PIL import Image, ImageTk
 
 
 
@@ -145,7 +145,7 @@ def updatecolors():
     sky.itemconfig(ca_ball, fill=ca_fill)
 
 def updatemoons():
-    global ttemp, io_ball, eu_ball, ga_ball, ca_ball, framewidth, frameheight
+    global ttemp, io_ball, eu_ball, ga_ball, ca_ball, framewidth, frameheight, jup_img
     sky.bind("<Button-1>", mooncoords)
     tmoon = ts.utc(ttemp)
     jupdiam = 139822.
@@ -171,8 +171,8 @@ def updatemoons():
     ca_ball = sky.create_oval(ju_x + ca_x*xscale - moonrad, ju_z + ca_z*zscale - moonrad, \
                               ju_x + ca_x*xscale + moonrad, ju_z + ca_z*zscale + moonrad, \
                               fill="white", tags=("Callisto", str('% 4.2f' % ca_x) ))
-    ju_ball = sky.create_oval(ju_x - juprad, ju_z -juprad, ju_x + juprad, ju_z + juprad, \
-                              fill="gray", tags=("Jupiter", "0" ) )
+    ju_ball = sky.create_image(ju_x, ju_z, \
+                               image=jup_img, tags=("Jupiter", "0" ) )
     updatecolors()
     if io_y < 0: sky.tag_raise(io_ball)
     if eu_y < 0: sky.tag_raise(eu_ball)
@@ -251,6 +251,8 @@ sky = tk.Canvas(moonframe, width=framewidth, height=frameheight/4)
 sky.config(bg="black")
 sky.place(relx=0, rely=0)
 sky.bind("<Button-1>", mooncoords)
+juprad = 2*13
+jup_img = ImageTk.PhotoImage(Image.open("images/jupiter_transparent.png").resize((juprad, juprad)))
 updatemoons()
 
 
