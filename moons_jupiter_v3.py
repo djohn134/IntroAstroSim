@@ -145,7 +145,7 @@ def updatecolors():
     sky.itemconfig(ca_ball, fill=ca_fill)
 
 def updatemoons():
-    global ttemp, io_ball, eu_ball, ga_ball, ca_ball, framewidth, frameheight, jup_img
+    global ttemp, io_ball, eu_ball, ga_ball, ca_ball, framewidth, frameheight, jup_img, scale
     sky.bind("<Button-1>", mooncoords)
     tmoon = ts.utc(ttemp)
     jupdiam = 139822.
@@ -157,21 +157,21 @@ def updatemoons():
     ca_x, ca_y, ca_z = jupiter.at(tmoon).observe(callisto).ecliptic_position().km / jupdiam
     moonrad = 3
     juprad = 13
-    xscale = juprad*2
+    xscale = juprad*scale.get()
     zscale = xscale
     global jup_img_scaled
     jup_img_scaled = ImageTk.PhotoImage(jup_img.resize((xscale, zscale)))
-    io_ball = sky.create_oval(ju_x + io_x*xscale - moonrad, ju_z + io_z*zscale - moonrad, \
-                              ju_x + io_x*xscale + moonrad, ju_z + io_z*zscale + moonrad, \
+    io_ball = sky.create_oval(ju_x + io_x*xscale - moonrad*scale.get()/2, ju_z + io_z*zscale - moonrad*scale.get()/2, \
+                              ju_x + io_x*xscale + moonrad*scale.get()/2, ju_z + io_z*zscale + moonrad*scale.get()/2, \
                               fill="white", tags=("Io", str('% 5.2f' % io_x) ) )
-    eu_ball = sky.create_oval(ju_x + eu_x*xscale - moonrad, ju_z + eu_z*zscale - moonrad, \
-                              ju_x + eu_x*xscale + moonrad, ju_z + eu_z*zscale + moonrad, \
+    eu_ball = sky.create_oval(ju_x + eu_x*xscale - moonrad*scale.get()/2, ju_z + eu_z*zscale - moonrad*scale.get()/2, \
+                              ju_x + eu_x*xscale + moonrad*scale.get()/2, ju_z + eu_z*zscale + moonrad*scale.get()/2, \
                               fill="white", tags=("Europa", str('% 5.2f' % eu_x) ) )
-    ga_ball = sky.create_oval(ju_x + ga_x*xscale - moonrad, ju_z + ga_z*zscale - moonrad, \
-                              ju_x + ga_x*xscale + moonrad, ju_z + ga_z*zscale + moonrad, \
+    ga_ball = sky.create_oval(ju_x + ga_x*xscale - moonrad*scale.get()/2, ju_z + ga_z*zscale - moonrad*scale.get()/2, \
+                              ju_x + ga_x*xscale + moonrad*scale.get()/2, ju_z + ga_z*zscale + moonrad*scale.get()/2, \
                               fill="white", tags=("Ganymede", str('% 4.2f' % ga_x) ) )
-    ca_ball = sky.create_oval(ju_x + ca_x*xscale - moonrad, ju_z + ca_z*zscale - moonrad, \
-                              ju_x + ca_x*xscale + moonrad, ju_z + ca_z*zscale + moonrad, \
+    ca_ball = sky.create_oval(ju_x + ca_x*xscale - moonrad*scale.get()/2, ju_z + ca_z*zscale - moonrad*scale.get()/2, \
+                              ju_x + ca_x*xscale + moonrad*scale.get()/2, ju_z + ca_z*zscale + moonrad*scale.get()/2, \
                               fill="white", tags=("Callisto", str('% 4.2f' % ca_x) ))
     ju_ball = sky.create_image(ju_x, ju_z, \
                                image=jup_img_scaled, tags=("Jupiter", "0" ) )
@@ -254,6 +254,8 @@ sky.config(bg="black")
 sky.place(relx=0, rely=0)
 sky.bind("<Button-1>", mooncoords)
 jup_img = Image.open("images/jupiter_transparent.png")
+scale = tk.IntVar()
+scale.set(2)
 updatemoons()
 
 
@@ -337,6 +339,15 @@ menubar = tk.Menu(window)
 featuremenu = tk.Menu(menubar, tearoff=0)
 featuremenu.add_checkbutton(label="ID by color", variable=colored, onvalue=True, offvalue=False, command=updatecolors)
 menubar.add_cascade(label="Features", menu=featuremenu)
+
+viewmenu = tk.Menu(menubar, tearoff=0)
+zoommenu = tk.Menu(viewmenu, tearoff=0)
+zoommenu.add_command(label="100x", command=lambda : (scale.set(1),deletemoons(),updatemoons()))
+zoommenu.add_command(label="200x", command=lambda : (scale.set(2),deletemoons(),updatemoons()))
+zoommenu.add_command(label="300x", command=lambda : (scale.set(3),deletemoons(),updatemoons()))
+zoommenu.add_command(label="400x", command=lambda : (scale.set(4),deletemoons(),updatemoons()))
+menubar.add_cascade(label="View", menu=viewmenu)
+viewmenu.add_cascade(label="Zoom", menu=zoommenu)
 
 window.config(menu=menubar)
 window.mainloop()
