@@ -31,7 +31,7 @@ from astropy.time import Time, TimezoneInfo
 import astropy.units as u
 from skyfield.api import load, load_file
 from PIL import Image, ImageTk
-
+import time
 
 
 # this class allows Entry boxes to contain default text that disappears when entering new values
@@ -207,13 +207,20 @@ def mooncoords(event):
                             font=("Ariel", 16))
         poslabel.configure(text="")
     
-
+def animate():
+    global anim, deltat, window
+    deltat = 0.5
+    while anim.get() == True:
+            forwardclick()
+            window.update()
+    
 # create the master window
 window = tk.Tk()
 window.title("Moons of Jupiter Simulation")
 framewidth = 800
 frameheight = 600
 colored = tk.BooleanVar(False)
+anim = tk.BooleanVar(False)
 window.geometry(str(framewidth)+'x'+str(frameheight))
 
 # create moon animation frame
@@ -338,6 +345,7 @@ quit_button['command'] = window.destroy
 menubar = tk.Menu(window)
 featuremenu = tk.Menu(menubar, tearoff=0)
 featuremenu.add_checkbutton(label="ID by color", variable=colored, onvalue=True, offvalue=False, command=updatecolors)
+featuremenu.add_checkbutton(label="Animate", variable=anim, onvalue=True, offvalue=False, command=animate)
 menubar.add_cascade(label="Features", menu=featuremenu)
 
 viewmenu = tk.Menu(menubar, tearoff=0)
