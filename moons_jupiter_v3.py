@@ -213,6 +213,7 @@ def animate():
     while anim.get() == True:
             forwardclick()
             window.update()
+            time.sleep(0.01)
     
 # create the master window
 window = tk.Tk()
